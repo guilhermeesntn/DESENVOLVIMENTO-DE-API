@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professores</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Professores Sistemas de Informação</h1>
+
+    <form id="professorForm">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" placeholder="Nome do professor" required><br>
+        <label for="disciplina">Disciplina:</label>
+        <input type="text" id="disciplina" placeholder="Disciplina" required><br>
+        <button type="submit">Adicionar Professor</button>
+    </form>
+
+    <table id="professoresTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Disciplina</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+
+    <script src="professoresCrud.js"></script>
+
+    <script>
+        let editIndex = null;
+
+        document.getElementById("professorForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            let nome = document.getElementById("nome").value;
+            let disciplina = document.getElementById("disciplina").value;
+
+            if (editIndex === null) {
+                createProfessor({ id: professores.length + 1, nome, disciplina });
+            } else {
+                updateProfessor(editIndex, { id: professores[editIndex].id, nome, disciplina });
+                editIndex = null;
+            }
+
+            document.getElementById("professorForm").reset();
+            renderProfessores();
+        });
+
+        function renderProfessores() {
+            let tbody = document.querySelector("#professoresTable tbody");
+            tbody.innerHTML = "";
+
+            professores.forEach((professor, index) => {
+                let row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${professor.id}</td>
+                    <td>${professor.nome}</td>
+                    <td>${professor.disciplina}</td>
+                    <td>
+                        <button class="edit" onclick="editProfessor(${index})">Editar</button>
+                        <button class="delete" onclick="handleDeleteProfessor(${index})">Excluir</button>
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+            });
+        }
+
+        function editProfessor(index) {
+            document.getElementById("nome").value = professores[index].nome;
+            document.getElementById("disciplina").value = professores[index].disciplina;
+            editIndex = index;
+        }
+
+        function handleDeleteProfessor(index) {
+            deleteProfessor(index); 
+            renderProfessores();
+        }
+
+        renderProfessores();
+    </script>
+
+</body>
+</html>
